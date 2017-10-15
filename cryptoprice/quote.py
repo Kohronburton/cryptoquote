@@ -1,11 +1,13 @@
 """Classes for handling price quotes on an exchange for a pair of assets"""
 
+from datetime import datetime
+
 class Quote(object):
     """Represents a price quote for a pair of assets on an exchange"""
 
     def __init__(self, asset_pair, ask_price=None, bid_price=None,
                  last_trade_price=None, today_low=None, today_high=None,
-                 twenty_four_low=None, twenty_four_high=None):
+                 twenty_four_low=None, twenty_four_high=None, time=None):
         """Instantiates a new quote
 
         :param asset_pair: asset pair the quote represents
@@ -24,6 +26,8 @@ class Quote(object):
         :type twenty_four_low: float
         :param twenty_four_high: highest price in last 24h
         :type twenty_four_high: float
+        :param time: (optional) quote time
+        :type time: :class:`datetime.datetime`
         """
 
         # validate inputs
@@ -36,15 +40,43 @@ class Quote(object):
         self.twenty_four_low = float(twenty_four_low)
         self.twenty_four_high = float(twenty_four_high)
 
+        if time is None:
+            time = datetime.now()
+
+        self.time = time
+
     def __str__(self):
         """String representation of quote
 
-        :return: quote price
+        :return: quote information
         :rtype: str
         """
 
-        # use the last trade price
-        price = self.last_trade_price
+        return self.info()
 
-        return "1 %s\t%s" % (self.asset_pair.base_asset,
-                             self.asset_pair.quote_asset.formatted_value(price))
+    def info(self):
+        """Get quote information
+
+        :return: quote information
+        :rtype: str
+        """
+
+        # locale-aware time
+        time_str = self.time.strftime("%x %X")
+
+        return ("%s price as of %s:\n"
+               "\tAsk: %s\n"
+               "\tBid: %s\n"
+               "\tLast: %s\n"
+               "\tToday low: %s (last 24h: %s)\n"
+               "\tToday high: %s (last 24h: %s)") % (
+            self.asset_pair.base_asset,
+            time_str,
+            self.asset_pair.quote_asset.formatted_value(self.ask_price),
+            self.asset_pair.quote_asset.formatted_value(self.bid_price),
+            self.asset_pair.quote_asset.formatted_value(self.last_trade_price),
+            self.asset_pair.quote_asset.formatted_value(self.today_low),
+            self.asset_pair.quote_asset.formatted_value(self.twenty_four_low),
+            self.asset_pair.quote_asset.formatted_value(self.today_high),
+            self.asset_pair.quote_asset.formatted_value(self.twenty_four_high),
+        )

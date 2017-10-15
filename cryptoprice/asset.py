@@ -5,8 +5,9 @@ import abc
 class BaseAsset(object, metaclass=abc.ABCMeta):
     """Abstract class representing a crypto or fiat currency"""
 
-    # asset name
+    # asset names
     NAME = "NONE"
+    ALT_NAMES = []
 
     # asset symbol (e.g. £)
     SYMBOL = "?"
@@ -30,6 +31,10 @@ class BaseAsset(object, metaclass=abc.ABCMeta):
 
     def __str__(self):
         return self.NAME
+
+    @property
+    def aliases(self):
+        return [self.NAME] + [self.SYMBOL] + self.ALT_NAMES
 
     @property
     def value_prefix(self):
@@ -77,6 +82,7 @@ class BTCAsset(CryptoAsset):
     """Bitcoin cryptocurrency"""
 
     NAME = "BTC"
+    ALT_NAMES = ["XBT"]
     SYMBOL = "BTC"
 
     EXCHANGE_NAMES = {
@@ -107,6 +113,7 @@ class ETHAsset(CryptoAsset):
     """Etherium cryptocurrency"""
 
     NAME = "ETH"
+    ALT_NAMES = ["XETH"]
     SYMBOL = "ETH"
 
     EXCHANGE_NAMES = {
@@ -276,6 +283,8 @@ class AssetFactory(object):
 
         :param asset_name: asset name
         :type asset_name: str
+        :return: asset object
+        :rtype: :class:`~cryptoprice.asset.BaseAsset`
         """
 
         # check if asset exists
