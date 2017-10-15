@@ -185,28 +185,28 @@ class BaseAssetPair(object, metaclass=abc.ABCMeta):
     # exchange name
     EXCHANGE = None
 
-    def __init__(self, pair_name, pretty_name, crypto_asset, fiat_asset):
+    def __init__(self, pair_name, pretty_name, base_asset, quote_asset):
         """Instantiates a new abstract asset pair
 
         :param pair_name: internal/API name of asset pair used by the exchange
         :type pair_name: str
         :param pretty_name: public name of asset pair
         :type pretty_name: str
-        :param crypto_asset: cryptocurrency asset used in the pair
-        :type crypto_asset: :class:`~cryptoprice.asset.BaseAsset`
-        :param fiat_asset: fiat currency asset used in the pair
-        :type fiat_asset: :class:`~cryptoprice.asset.BaseAsset`
+        :param base_asset: base asset
+        :type base_asset: :class:`~cryptoprice.asset.BaseAsset`
+        :param quote_asset: quote asset
+        :type quote_asset: :class:`~cryptoprice.asset.BaseAsset`
         """
 
         self.pair_name = str(pair_name)
         self.pretty_name = str(pretty_name)
-        self.crypto_asset = crypto_asset
-        self.fiat_asset = fiat_asset
+        self.base_asset = base_asset
+        self.quote_asset = quote_asset
 
     def __str__(self):
         return "%s (%s -> %s) on %s" % (self.asset_name,
-                                        self.crypto_asset.exchange_name(self.EXCHANGE),
-                                        self.fiat_asset.exchange_name(self.EXCHANGE),
+                                        self.base_asset.exchange_name(self.EXCHANGE),
+                                        self.quote_asset.exchange_name(self.EXCHANGE),
                                         self.EXCHANGE)
 
 class KrakenAssetPair(BaseAssetPair):
@@ -226,12 +226,12 @@ class KrakenAssetPair(BaseAssetPair):
         # extract asset information
         pair_name = str(pair_name)
         pretty_name = str(asset_data["altname"])
-        crypto_asset = AssetFactory.from_str(asset_data["base"])
-        fiat_asset = AssetFactory.from_str(asset_data["quote"])
+        base_asset = AssetFactory.from_str(asset_data["base"])
+        quote_asset = AssetFactory.from_str(asset_data["quote"])
 
         # construct asset pair
         super(KrakenAssetPair, self).__init__(pair_name, pretty_name,
-                                              crypto_asset, fiat_asset)
+                                              base_asset, quote_asset)
 
     @property
     def quote_str(self):

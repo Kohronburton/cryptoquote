@@ -46,5 +46,5 @@ class Quote(object):
         # use the last trade price
         price = self.last_trade_price
 
-        return "1 %s\t%s" % (self.asset_pair.crypto_asset,
-                             self.asset_pair.fiat_asset.formatted_value(price))
+        return "1 %s\t%s" % (self.asset_pair.base_asset,
+                             self.asset_pair.quote_asset.formatted_value(price))
