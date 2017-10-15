@@ -5,7 +5,6 @@ import logging
 import collections
 import json
 import argparse
-import appdirs
 import textwrap
 
 from cryptoprice.exchange import ExchangeFactory
