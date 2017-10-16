@@ -7,11 +7,18 @@ Bitcoin, Etherium and other cryptocurrency quotes via the terminal using Kraken'
   - `appdirs`
 
 ## Installation
-Currently no installation available; run the script with:
+The easiest way to install `cryptoquote` is via `pip3`:
+```bash
+pip3 install git+https://github.com/SeanDS/cryptoquote.git
+```
+This has the advantage of using `pip`'s package manager, so the tool can later
+be uninstalled. Alternatively, the tool can be installed without package
+support by directly running `setup.py`:
 ```bash
 $ cd /path/to/cryptoquote
-$ python3 -m cryptoquote
+$ python3 setup.py install
 ```
+You may need to run `setup.py` with root permission (e.g. with `sudo`).
 
 ## Usage
 `Cryptoquote` has a command line interpreter. Call:
@@ -23,13 +30,13 @@ to get started.
 ### Quotes
 For simple quote retrieval, call:
 ```bash
-$ cq price <base> <quote>
+$ cq quote <base> <quote>
 ```
 where `<base>` is the base asset identifier (e.g. `BTC`) and `<quote>` is the
 quote asset identifier (e.g. `USD`). For example, to get the current price of
 bitcoin in US dollars, call:
 ```bash
-$ cq price BTC USD
+$ cq quote BTC USD
 ```
 This will output something like:
 ```

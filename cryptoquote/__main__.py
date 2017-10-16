@@ -71,10 +71,10 @@ class Cmd(object):
 
         pass
 
-class Price(Cmd):
-    """Fetch asset price"""
+class Quote(Cmd):
+    """Fetch asset quote"""
 
-    cmd = "price"
+    cmd = "quote"
 
     def __init__(self):
         Cmd.__init__(self)
@@ -208,7 +208,7 @@ class Help(Cmd):
             print(MANPAGE.format(cmds=format_commands(man=True)))
 
 CMDS = collections.OrderedDict([
-    ("price", Price),
+    ("quote", Quote),
     ("list", List),
     ("reset", Reset),
     ("help", Help),
