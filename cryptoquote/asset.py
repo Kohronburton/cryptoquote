@@ -86,7 +86,9 @@ class BTCAsset(CryptoAsset):
     SYMBOL = "BTC"
 
     EXCHANGE_NAMES = {
-        "Kraken": "XXBT"
+        "Kraken": "XXBT",
+        "LocalBitcoins": "BTC",
+        "Coinbase": "BTC"
     }
 
 class DOGEAsset(CryptoAsset):
@@ -153,7 +155,8 @@ class EURAsset(FiatAsset):
     SYMBOL = "€"
 
     EXCHANGE_NAMES = {
-        "Kraken": "ZEUR"
+        "Kraken": "ZEUR",
+        "Coinbase": "EUR",
     }
 
 class GBPAsset(FiatAsset):
@@ -163,7 +166,8 @@ class GBPAsset(FiatAsset):
     SYMBOL = "£"
 
     EXCHANGE_NAMES = {
-        "Kraken": "ZGBP"
+        "Kraken": "ZGBP",
+        "Coinbase": "GBP"
     }
 
 class JPYAsset(FiatAsset):
@@ -173,7 +177,8 @@ class JPYAsset(FiatAsset):
     SYMBOL = "¥"
 
     EXCHANGE_NAMES = {
-        "Kraken": "ZEUR"
+        "Kraken": "ZJPY",
+        "Coinbase": "JPY"
     }
 
 class USDAsset(FiatAsset):
@@ -183,7 +188,8 @@ class USDAsset(FiatAsset):
     SYMBOL = "$"
 
     EXCHANGE_NAMES = {
-        "Kraken": "ZUSD"
+        "Kraken": "ZUSD",
+        "Coinbase": "USD"
     }
 
 class BaseAssetPair(object, metaclass=abc.ABCMeta):

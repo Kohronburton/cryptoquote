@@ -50,8 +50,7 @@ BTC price on Kraken as of 16/10/17 10:41:56:
 The date shown conforms to the user's locale.
 
 ### Available exchanges
-Type `cq list exchanges` to get a list of supported exchanges. Currently only
-Kraken and LocalBitcoins are supported.
+Type `cq list exchanges` to get a list of supported exchanges. Currently Kraken, LocalBitcoins and Coinbase are supported.
 
 ### Available assets
 Type `cq list assets` to get a list of supported assets.

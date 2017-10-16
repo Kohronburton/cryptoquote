@@ -175,16 +175,59 @@ class LocalBitcoins(BaseExchange):
 
         raise ValueError("%s not quoted on %s" % (quote_name, self.NAME))
 
-    def ticker_url(self, asset_pair):
+class Coinbase(BaseExchange):
+    # basic information
+    NAME = "Coinbase"
+    URL = "https://www.coinbase.com/"
+
+    # price URL
+    SPOT_PRICE_URL = "https://api.coinbase.com/v2/prices/{}-{}/spot"
+
+    def quote(self, base_name, quote_name):
+        """Returns quote for the specified asset pair
+
+        :param base_name: base asset name, or asset pair name
+        :type base_name: str
+        :param quote_name: (optional) quote asset name
+        :type quote_name: str
+        :return: quote
+        :rtype: :class:`~cryptoprice.quote.Quote`
+        """
+
+        # parse asset names
+        base = AssetFactory.from_str(base_name)
+        quote = AssetFactory.from_str(quote_name)
+
+        # get and decode JSON document with prices
+        quote_dict = requests.get(self.ticker_url(base, quote)).json()
+
+        # well-formatted document will contain a "data" field
+        if not "data" in quote_dict.keys():
+            raise KeyError("Unexpected JSON data received")
+
+        # extract prices from result dict
+        price = quote_dict["data"]
+
+        if "amount" in price.keys():
+            # build and return quote
+            return Quote(self.NAME, base, quote,
+                         last_trade_price=price["amount"])
+
+        raise ValueError("%s not quoted on %s" % (quote_name, self.NAME))
+
+    def ticker_url(self, base, quote):
         """Returns URL for the specified asset pair
 
-        :param asset_pair: asset pair to get prices for
-        :type asset_pair: :class:`~cryptoprice.asset.BaseAssetPair`
+        :param base: base asset to get prices for
+        :type base: :class:`~cryptoprice.asset.BaseAsset`
+        :param quote: quote asset to get prices for
+        :type quote: :class:`~cryptoprice.asset.BaseAsset`
         :return: URL
         :rtype: str
         """
 
-        return self.TICKER_URL + "?pair=%s" % asset_pair.quote_str
+        return self.SPOT_PRICE_URL.format(base.EXCHANGE_NAMES[self.NAME],
+                                          quote.EXCHANGE_NAMES[self.NAME])
 
 class ExchangeFactory(object):
     """Factory to return an exchange given its name"""
@@ -192,7 +235,8 @@ class ExchangeFactory(object):
     # exchange class map
     EXCHANGES = {
         "kraken": Kraken,
-        "localbitcoins": LocalBitcoins
+        "localbitcoins": LocalBitcoins,
+        "coinbase": Coinbase
     }
 
     @classmethod
