@@ -8,6 +8,7 @@ import argparse
 import textwrap
 
 from .exchange import ExchangeFactory
+from .asset import AssetFactory
 from .cache import delete_cache
 
 PROG = "cq"
@@ -104,6 +105,74 @@ class Price(Cmd):
 
         print(quote)
 
+class List(Cmd):
+    """List exchanges"""
+
+    cmd = "list"
+
+    def __init__(self):
+        Cmd.__init__(self)
+
+        self.parser.add_argument("type",
+                                 help="object types to list, e.g. \"exchanges\" "
+                                      "or \"assets\"")
+
+    def __call__(self, args):
+        obj = args.type.lower()
+
+        if obj == "exchanges":
+            exchanges = ExchangeFactory.EXCHANGES
+
+            print("Supported exchanges:")
+            for k in sorted(exchanges.keys()):
+                print("\t%s (%s)" % (exchanges[k].NAME, exchanges[k].URL))
+        elif obj == "assets":
+            crypto_assets = AssetFactory.CRYPTO_ASSETS
+
+            # running list of cryptocurrencies printed
+            crypto_list = []
+
+            print("Supported cryptocurrency assets:")
+            for k in sorted(crypto_assets.keys()):
+                asset = crypto_assets[k]
+
+                if asset in crypto_list:
+                    # don't print asset again
+                    continue
+
+                alt_names = ""
+
+                if len(asset.ALT_NAMES):
+                    alt_names = "(" + ", ".join(asset.ALT_NAMES) + ")"
+
+                print("\t", asset.NAME, alt_names)
+
+                # add currency to list of those printed
+                crypto_list.append(asset)
+
+            fiat_assets = AssetFactory.FIAT_ASSETS
+
+            # running list of fiat currencies printed
+            fiat_list = []
+
+            print("Supported fiat currency assets:")
+            for k in sorted(fiat_assets.keys()):
+                asset = fiat_assets[k]
+
+                if asset in fiat_list:
+                    # don't print asset again
+                    continue
+
+                alt_names = ""
+
+                if len(asset.ALT_NAMES):
+                    alt_names = "(" + ", ".join(asset.ALT_NAMES) + ")"
+
+                print("\t", asset.NAME, alt_names)
+
+                # add currency to list of those printed
+                fiat_list.append(asset)
+
 class Reset(Cmd):
     """Reset cache"""
 
@@ -140,6 +209,7 @@ class Help(Cmd):
 
 CMDS = collections.OrderedDict([
     ("price", Price),
+    ("list", List),
     ("reset", Reset),
     ("help", Help),
 ])

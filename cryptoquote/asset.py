@@ -254,9 +254,8 @@ class KrakenAssetPair(BaseAssetPair):
 class AssetFactory(object):
     """Factory to return an asset given its name or pretty name"""
 
-    # asset class map
-    ASSETS = {
-        # crypto
+    # asset class maps
+    CRYPTO_ASSETS = {
         "BCH": BCHAsset,
         "EOS": EOSAsset,
         "ETH": ETHAsset,
@@ -265,8 +264,9 @@ class AssetFactory(object):
         "DOGE": DOGEAsset,
         "XXDG": DOGEAsset,
         "GNO": GNOAsset,
-        "XXBT": BTCAsset,
-        # fiat
+        "XXBT": BTCAsset
+    }
+    FIAT_ASSETS = {
         "EUR": EURAsset,
         "ZEUR": EURAsset,
         "GBP": GBPAsset,
@@ -288,8 +288,10 @@ class AssetFactory(object):
         """
 
         # check if asset exists
-        if asset_name in cls.ASSETS.keys():
-            return cls.ASSETS[asset_name](*args, **kwargs)
+        if asset_name in cls.CRYPTO_ASSETS.keys():
+            return cls.CRYPTO_ASSETS[asset_name](*args, **kwargs)
+        elif asset_name in cls.FIAT_ASSETS.keys():
+            return cls.FIAT_ASSETS[asset_name](*args, **kwargs)
         else:
             # unknown asset
             return UnknownAsset()

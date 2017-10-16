@@ -12,6 +12,9 @@ from .cache import read_cache, write_cache, NoCacheException, \
 class BaseExchange(object, metaclass=abc.ABCMeta):
     """Object representing a cryptocurrency exchange"""
 
+    NAME = ""
+    URL = ""
+
     @abc.abstractmethod
     def asset_pairs(self):
         """Generates sequence of asset pairs available at this exchange
@@ -41,6 +44,10 @@ class BaseExchange(object, metaclass=abc.ABCMeta):
         raise ValueError("Specified assets cannot be formed into a known pair")
 
 class Kraken(BaseExchange):
+    # basic information
+    NAME = "Kraken"
+    URL = "https://www.kraken.com/"
+
     # asset pairs URL
     ASSET_PAIR_URL = "https://api.kraken.com/0/public/AssetPairs"
 
