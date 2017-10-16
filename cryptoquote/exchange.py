@@ -4,9 +4,9 @@ import abc
 import requests
 import logging
 
-from cryptoprice.asset import KrakenAssetPair
-from cryptoprice.quote import Quote
-from cryptoprice.cache import read_cache, write_cache, NoCacheException, \
+from cryptoquote.asset import KrakenAssetPair
+from cryptoquote.quote import Quote
+from cryptoquote.cache import read_cache, write_cache, NoCacheException, \
                               InvalidCacheException
 
 class BaseExchange(object, metaclass=abc.ABCMeta):

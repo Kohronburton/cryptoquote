@@ -7,8 +7,8 @@ import json
 import argparse
 import textwrap
 
-from cryptoprice.exchange import ExchangeFactory
-from cryptoprice.cache import delete_cache
+from cryptoquote.exchange import ExchangeFactory
+from cryptoquote.cache import delete_cache
 
 # Save asset pair data to file
 # Reset asset pair data
@@ -16,8 +16,8 @@ from cryptoprice.cache import delete_cache
 #   Update asset pair cache every N days (31?)
 #   Handle unknown asset pairs
 
-PROG = "cryptoprice"
-DESC = "Cryptocurrency prices on the command line"
+PROG = "cryptoquote"
+DESC = "Cryptocurrency quotes on the command line"
 
 SYNOPSIS = "{} <command> [<args>...]".format(PROG)
 
@@ -30,7 +30,7 @@ SYNOPSIS
 
 DESCRIPTION
 
-  Command line tool to retrieve cryptocurrency prices.
+  Command line tool to retrieve cryptocurrency quotes.
 
 COMMANDS
 
