@@ -4,7 +4,7 @@ import abc
 import requests
 import logging
 
-from .asset import KrakenAssetPair
+from .asset import AssetFactory, KrakenAssetPair, BTCAsset
 from .quote import Quote
 from .cache import read_cache, write_cache, NoCacheException, \
                    InvalidCacheException
@@ -16,22 +16,26 @@ class BaseExchange(object, metaclass=abc.ABCMeta):
     URL = ""
 
     @abc.abstractmethod
-    def asset_pairs(self):
-        """Generates sequence of asset pairs available at this exchange
+    def quote(self, base_name, quote_name):
+        """Returns quote for the specified asset pair
 
-        :return: asset pairs
-        :rtype: sequence of :class:`~cryptoprice.asset.BaseAssetPair`
+        :param base_name: base asset name, or asset pair name
+        :type base_name: str
+        :param quote_name: (optional) quote asset name
+        :type quote_name: str
+        :return: quote
+        :rtype: :class:`~cryptoprice.quote.Quote`
         """
 
         return NotImplemented
 
-    def assets_to_pair(self, base, quote):
-        """Returns the pair name corresponding to the specified assets
+    def asset_names_to_pair(self, base, quote):
+        """Returns the pair name corresponding to the specified asset names
 
-        :param base: base asset
-        :type base: :class:`~cryptoprice.asset.BaseAsset`
-        :param quote: quote asset
-        :type quote: :class:`~cryptoprice.asset.BaseAsset`
+        :param base: base asset name, or asset pair name
+        :type base: str
+        :param quote: (optional) quote asset name
+        :type quote: str
         :return: asset pair
         :rtype: :class:`~cryptoprice.asset.BaseAssetPair`
         :raises ValueError: if assets can't be formed into a known pair
@@ -85,22 +89,21 @@ class Kraken(BaseExchange):
 
             yield KrakenAssetPair(asset_pair, asset_pair_dict["result"][asset_pair])
 
-    def quote(self, base, quote=None):
+    def quote(self, base_name, quote_name=None):
         """Returns quote for the specified asset pair
 
-        :param base: base asset, or asset pair
-        :type base: :class:`~cryptoprice.asset.BaseAsset` or \
-                    :class:`~cryptoprice.asset.BaseAssetPair`
-        :param quote: (optional) quote asset
-        :type quote: :class:`~cryptoprice.asset.BaseAsset` or None
+        :param base_name: base asset name, or asset pair name
+        :type base_name: str
+        :param quote_name: (optional) quote asset name
+        :type quote_name: str
         :return: quote
         :rtype: :class:`~cryptoprice.quote.Quote`
         """
 
-        if quote is not None:
-            asset_pair = self.assets_to_pair(base, quote)
+        if quote_name is not None:
+            asset_pair = self.asset_names_to_pair(base_name, quote_name)
         else:
-            asset_pair = base
+            asset_pair = str(base_name)
 
         # get and decode JSON document with prices
         quote_dict = requests.get(self.ticker_url(asset_pair)).json()
@@ -113,10 +116,10 @@ class Kraken(BaseExchange):
         prices = quote_dict["result"][asset_pair.pair_name]
 
         # build and return quote
-        return Quote(asset_pair, ask_price=prices["a"][0],
-                     bid_price=prices["b"][0], last_trade_price=prices["c"][0],
-                     today_low=prices["l"][0], today_high=prices["h"][0],
-                     twenty_four_low=prices["l"][1],
+        return Quote(self.NAME, asset_pair.base_asset, asset_pair.quote_asset,
+                     ask_price=prices["a"][0], bid_price=prices["b"][0],
+                     last_trade_price=prices["c"][0], today_low=prices["l"][0],
+                     today_high=prices["h"][0], twenty_four_low=prices["l"][1],
                      twenty_four_high=prices["h"][1])
 
     def ticker_url(self, asset_pair):
@@ -130,13 +133,66 @@ class Kraken(BaseExchange):
 
         return self.TICKER_URL + "?pair=%s" % asset_pair.quote_str
 
+class LocalBitcoins(BaseExchange):
+    # basic information
+    NAME = "LocalBitcoins"
+    URL = "https://localbitcoins.com/"
+
+    # price URL
+    TICKER_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/"
+
+    def quote(self, base_name, quote_name):
+        """Returns quote for the specified asset pair
+
+        :param base_name: base asset name, or asset pair name
+        :type base_name: str
+        :param quote_name: (optional) quote asset name
+        :type quote_name: str
+        :return: quote
+        :rtype: :class:`~cryptoprice.quote.Quote`
+        """
+
+        # parse asset names
+        base = AssetFactory.from_str(base_name)
+        quote = AssetFactory.from_str(quote_name)
+
+        if not isinstance(base, BTCAsset):
+            raise ValueError("%s only supports BTC base asset" % self.NAME)
+
+        # get and decode JSON document with prices
+        quote_dict = requests.get(self.TICKER_URL).json()
+
+        # find quote price in dict
+        for currency in quote_dict.keys():
+            if currency in quote.aliases:
+                # found currency
+                prices = quote_dict[currency]
+
+                # build and return quote
+                return Quote(self.NAME, base, quote,
+                             last_trade_price=prices["rates"]["last"],
+                             twenty_four_avg=prices["avg_24h"])
+
+        raise ValueError("%s not quoted on %s" % (quote_name, self.NAME))
+
+    def ticker_url(self, asset_pair):
+        """Returns URL for the specified asset pair
+
+        :param asset_pair: asset pair to get prices for
+        :type asset_pair: :class:`~cryptoprice.asset.BaseAssetPair`
+        :return: URL
+        :rtype: str
+        """
+
+        return self.TICKER_URL + "?pair=%s" % asset_pair.quote_str
 
 class ExchangeFactory(object):
     """Factory to return an exchange given its name"""
 
     # exchange class map
     EXCHANGES = {
-        "kraken": Kraken
+        "kraken": Kraken,
+        "localbitcoins": LocalBitcoins
     }
 
     @classmethod

@@ -264,6 +264,7 @@ class AssetFactory(object):
         "DOGE": DOGEAsset,
         "XXDG": DOGEAsset,
         "GNO": GNOAsset,
+        "BTC": BTCAsset,
         "XXBT": BTCAsset
     }
     FIAT_ASSETS = {
