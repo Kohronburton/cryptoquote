@@ -64,13 +64,14 @@ class Quote(object):
         # locale-aware time
         time_str = self.time.strftime("%x %X")
 
-        return ("%s price as of %s:\n"
+        return ("%s price on %s as of %s:\n"
                "\tAsk: %s\n"
                "\tBid: %s\n"
                "\tLast: %s\n"
                "\tToday low: %s (last 24h: %s)\n"
                "\tToday high: %s (last 24h: %s)") % (
             self.asset_pair.base_asset,
+            self.asset_pair.EXCHANGE,
             time_str,
             self.asset_pair.quote_asset.formatted_value(self.ask_price),
             self.asset_pair.quote_asset.formatted_value(self.bid_price),
