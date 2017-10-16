@@ -8,7 +8,7 @@ with open("README.md") as readme_file:
 with open("HISTORY.md") as history_file:
     history = history_file.read()
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 requirements = [
     "requests >= 2.10.0",
