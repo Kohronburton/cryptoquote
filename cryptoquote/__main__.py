@@ -7,8 +7,8 @@ import json
 import argparse
 import textwrap
 
-from cryptoquote.exchange import ExchangeFactory
-from cryptoquote.cache import delete_cache
+from .exchange import ExchangeFactory
+from .cache import delete_cache
 
 PROG = "cq"
 DESC = "Cryptocurrency quotes on the command line"

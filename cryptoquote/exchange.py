@@ -4,10 +4,10 @@ import abc
 import requests
 import logging
 
-from cryptoquote.asset import KrakenAssetPair
-from cryptoquote.quote import Quote
-from cryptoquote.cache import read_cache, write_cache, NoCacheException, \
-                              InvalidCacheException
+from .asset import KrakenAssetPair
+from .quote import Quote
+from .cache import read_cache, write_cache, NoCacheException, \
+                   InvalidCacheException
 
 class BaseExchange(object, metaclass=abc.ABCMeta):
     """Object representing a cryptocurrency exchange"""
