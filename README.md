@@ -51,7 +51,7 @@ The date shown conforms to the user's locale.
 
 ### Available exchanges
 Type `cq list exchanges` to get a list of supported exchanges. Currently only
-Kraken is supported.
+Kraken and LocalBitcoins are supported.
 
 ### Available assets
 Type `cq list assets` to get a list of supported assets.
