@@ -119,7 +119,8 @@ class ETHAsset(CryptoAsset):
     SYMBOL = "ETH"
 
     EXCHANGE_NAMES = {
-        "Kraken": "XETH"
+        "Kraken": "XETH",
+        "Coinbase": "ETH"
     }
 
 class GNOAsset(CryptoAsset):
