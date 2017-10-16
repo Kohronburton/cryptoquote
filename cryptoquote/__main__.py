@@ -10,13 +10,7 @@ import textwrap
 from cryptoquote.exchange import ExchangeFactory
 from cryptoquote.cache import delete_cache
 
-# Save asset pair data to file
-# Reset asset pair data
-# Get quote for two assets
-#   Update asset pair cache every N days (31?)
-#   Handle unknown asset pairs
-
-PROG = "cryptoquote"
+PROG = "cq"
 DESC = "Cryptocurrency quotes on the command line"
 
 SYNOPSIS = "{} <command> [<args>...]".format(PROG)
