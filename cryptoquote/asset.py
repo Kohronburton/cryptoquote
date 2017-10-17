@@ -29,6 +29,18 @@ class BaseAsset(object, metaclass=abc.ABCMeta):
 
         return self.EXCHANGE_NAMES[str(exchange)]
 
+    def can_handle_exchange(self, exchange):
+        """Checks if the specified exchange handles this asset
+
+        :param exchange: exchange
+        :type exchange: :class:`~cryptoquote.exchange.BaseExchange`
+        :return: true if exchange can handle asset, false otherwise
+        :rtype: bool
+        """
+
+        return exchange.NAME.lower() in [e.lower()
+                                         for e in self.EXCHANGE_NAMES.keys()]
+
     def __str__(self):
         return self.NAME
 
@@ -50,10 +62,6 @@ class UnknownAsset(BaseAsset):
     """Unknown asset"""
 
     NAME = "?"
-
-    EXCHANGE_NAMES = {
-        "Kraken": "?"
-    }
 
 class CryptoAsset(BaseAsset):
     """Abstract cryptocurrency asset"""
@@ -157,6 +165,7 @@ class EURAsset(FiatAsset):
 
     EXCHANGE_NAMES = {
         "Kraken": "ZEUR",
+        "LocalBitcoins": "EUR",
         "Coinbase": "EUR",
     }
 
@@ -168,6 +177,7 @@ class GBPAsset(FiatAsset):
 
     EXCHANGE_NAMES = {
         "Kraken": "ZGBP",
+        "LocalBitcoins": "GBP",
         "Coinbase": "GBP"
     }
 
@@ -179,6 +189,7 @@ class JPYAsset(FiatAsset):
 
     EXCHANGE_NAMES = {
         "Kraken": "ZJPY",
+        "LocalBitcoins": "JPY",
         "Coinbase": "JPY"
     }
 
@@ -190,6 +201,7 @@ class USDAsset(FiatAsset):
 
     EXCHANGE_NAMES = {
         "Kraken": "ZUSD",
+        "LocalBitcoins": "USD",
         "Coinbase": "USD"
     }
 

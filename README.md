@@ -49,6 +49,9 @@ BTC price on Kraken as of 16/10/17 10:41:56:
 ```
 The date shown conforms to the user's locale.
 
+You can specify a particular exchange with the `-e` or `--exchange` flag, or
+alternatively specify `-e all` to retrieve quotes from all available exchanges.
+
 ### Available exchanges
 Type `cq list exchanges` to get a list of supported exchanges. Currently Kraken, LocalBitcoins and Coinbase are supported.
 

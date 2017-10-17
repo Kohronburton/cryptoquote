@@ -84,7 +84,8 @@ class Quote(Cmd):
         self.parser.add_argument("quote",
                                  help="quote asset")
         self.parser.add_argument("-e", "--exchange", default="Kraken",
-                                 help="exchange from which to fetch prices")
+                                 help="exchange from which to fetch prices, "
+                                      "or \"all\"")
         self.parser.add_argument("-v", "--verbose", action="store_true",
                                  help="enable verbose output")
 
@@ -92,18 +93,22 @@ class Quote(Cmd):
         if args.verbose:
             enable_verbose_logs()
 
-        # get exchange object
-        exchange = get_exchange(args.exchange)
+        if args.exchange.lower() == "all":
+            # all exchanges
+            exchanges = [get_exchange(e) for e in
+                         sorted(ExchangeFactory.EXCHANGES.keys())]
+        else:
+            # get exchange object
+            exchanges = [get_exchange(args.exchange)]
 
-        try:
-            quote = exchange.quote(args.base, args.quote)
-        except ValueError as e:
-            print("Specified base and quote assets are not available at this "
-                  "exchange", file=sys.stderr)
+        for exchange in exchanges:
+            try:
+                quote = exchange.quote(args.base, args.quote)
+            except ValueError as e:
+                print(e, file=sys.stderr)
+                continue
 
-            sys.exit(1)
-
-        print(quote)
+            print(quote)
 
 class List(Cmd):
     """List exchanges"""
